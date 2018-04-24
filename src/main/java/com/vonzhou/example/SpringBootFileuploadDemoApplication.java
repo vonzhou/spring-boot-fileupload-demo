@@ -7,11 +7,15 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.DispatcherServlet;
 
-@SpringBootApplication(exclude = {MultipartAutoConfiguration.class})
+import javax.servlet.MultipartConfigElement;
+
+//@SpringBootApplication(exclude = {MultipartAutoConfiguration.class})
+@SpringBootApplication
 public class SpringBootFileuploadDemoApplication {
 
 
@@ -50,7 +54,17 @@ public class SpringBootFileuploadDemoApplication {
 //
 //        return cmr;
 //    }
-    @Bean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
+    @Bean
+    public MultipartConfigElement configElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        factory.setMaxFileSize("2048MB");
+        factory.setMaxRequestSize("2048MB");
+
+        return factory.createMultipartConfig();
+    }
+
+
+//    @Bean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
     public CommonsMultipartResolver getMultipartResolver() {
         System.out.println("custom  multipart resolver");
         CommonsMultipartResolver cmr = new MyCommonsMultipartResolver();
