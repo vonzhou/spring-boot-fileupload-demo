@@ -14,10 +14,9 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.MultipartConfigElement;
 
-//@SpringBootApplication(exclude = {MultipartAutoConfiguration.class})
-@SpringBootApplication
+@SpringBootApplication(exclude = {MultipartAutoConfiguration.class})
+//@SpringBootApplication
 public class SpringBootFileuploadDemoApplication {
-
 
     /**
      * 跟踪这种方式为何不行?
@@ -54,6 +53,7 @@ public class SpringBootFileuploadDemoApplication {
 //
 //        return cmr;
 //    }
+
     @Bean
     public MultipartConfigElement configElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
@@ -63,13 +63,11 @@ public class SpringBootFileuploadDemoApplication {
         return factory.createMultipartConfig();
     }
 
-
-//    @Bean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
+    @Bean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
     public CommonsMultipartResolver getMultipartResolver() {
         System.out.println("custom  multipart resolver");
         CommonsMultipartResolver cmr = new MyCommonsMultipartResolver();
         cmr.setMaxUploadSize(1000000000);
-
 
         return cmr;
     }
@@ -82,18 +80,14 @@ public class SpringBootFileuploadDemoApplication {
                 private long megaBytes = -1;
 
                 public void update(long pBytesRead, long pContentLength, int pItems) {
+                    // 控制频率
                     long mBytes = pBytesRead / 1000000;
                     if (megaBytes == mBytes) {
                         return;
                     }
                     megaBytes = mBytes;
-                    System.out.println("We are currently reading item " + pItems);
-                    if (pContentLength == -1) {
-                        System.out.println("So far, " + pBytesRead + " bytes have been read.");
-                    } else {
-                        System.out.println("So far, " + pBytesRead + " of " + pContentLength
-                                + " bytes have been read.");
-                    }
+                    System.out.println(String.format("正在读取第%s项...", pItems));
+                    System.out.println(String.format("共%s字节，已读取%s字节", pContentLength, pBytesRead));
                 }
             });
             return res;
